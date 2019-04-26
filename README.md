@@ -12,7 +12,7 @@ You will first setup a bucket to host static website. Then you will create a dep
 Go to **Cloud9** on the AWS Web console - this is your IDE in the cloud.
 You can also use your local IDE for all the steps of this lab.
 
-* on top right corner - **Switch to Oregon**
+* on top right corner - **Switch to US East(N. Virginia)**
 * on the left hand pane click on **"Shared With You"**
 
 
