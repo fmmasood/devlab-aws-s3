@@ -31,7 +31,7 @@ To host a static website, you configure an Amazon S3 bucket for website hosting,
 1. Run the following command to create S3 bucket and set appropriate permission to host a website.
 
 ```bash
-$ aws cloudformation deploy --template-file /home/ec2-user/environment/awss3labhome/prereqs/setup_s3_bucket.yaml --stack-name devlab-s3-bucket --capabilities CAPABILITY_IAM
+aws cloudformation deploy --template-file /home/ec2-user/environment/awss3labhome/prereqs/setup_s3_bucket.yaml --stack-name devlab-s3-bucket --capabilities CAPABILITY_IAM
 ```
 
 ![CFN Stack Deploy](images/s3_lab_deploy_stack.png)
@@ -67,15 +67,15 @@ AWS CloudFormation creates the AWS resources as defined in the template, and gro
 1. Now you have the bucket, let us upload some files and view them in a browser. Use following command to upload files from pre-reqs folder to S3 bucket you just created. 
 
 ```bash
-$ aws s3 cp /home/ec2-user/environment/awss3labhome/prereqs/index.html s3://<replace-by-s3-bucket-name-created-above>
+aws s3 cp /home/ec2-user/environment/awss3labhome/prereqs/index.html s3://<replace-by-s3-bucket-name-created-above>
 
-$ aws s3 cp /home/ec2-user/environment/awss3labhome/prereqs/error.html s3://<replace-by-s3-bucket-name-created-above>
+aws s3 cp /home/ec2-user/environment/awss3labhome/prereqs/error.html s3://<replace-by-s3-bucket-name-created-above>
 ```
 
 **Note** If you do not have the bucket name or website url, execute following command to list them.
 
 ```bash
-$ aws cloudformation describe-stacks --stack-name 'devlab-s3-bucket' --query Stacks[*].Outputs[*]
+aws cloudformation describe-stacks --stack-name 'devlab-s3-bucket' --query Stacks[*].Outputs[*]
 ```
 
 ![S3 Lab Describe Stack](images/s3_lab_describe_stack.png)
@@ -94,19 +94,19 @@ $ aws cloudformation describe-stacks --stack-name 'devlab-s3-bucket' --query Sta
 2. Execute following command to create a code commit repository and pipeline. 
 
 ```bash
-$ aws cloudformation deploy --template-file /home/ec2-user/environment/awss3labhome/prereqs/setup_deployment_pipeline.yaml --stack-name devlab-s3-bucket-pipeline --parameter-overrides WebsiteS3Bucket=<replace-by-s3-bucket-name-created-above> --capabilities CAPABILITY_IAM
+aws cloudformation deploy --template-file /home/ec2-user/environment/awss3labhome/prereqs/setup_deployment_pipeline.yaml --stack-name devlab-s3-bucket-pipeline --parameter-overrides WebsiteS3Bucket=<replace-by-s3-bucket-name-created-above> --capabilities CAPABILITY_IAM
 ```
 
 **Note** WebsiteS3Bucket is the same bucket we created earlier. If you do not have the bucket name or website url, execute following command to list them.
 
 ```bash
-$ aws cloudformation describe-stacks --stack-name 'devlab-s3-bucket' --query Stacks[*].Outputs[*]
+aws cloudformation describe-stacks --stack-name 'devlab-s3-bucket' --query Stacks[*].Outputs[*]
 ```
 
 You can review the stack in the cloudformation [console](https://console.aws.amazon.com/cloudformation) or execute following command to review the outputs
 
 ```bash
-$ aws cloudformation describe-stacks --stack-name 'devlab-s3-bucket-pipeline' --query Stacks[*].Outputs[*]
+aws cloudformation describe-stacks --stack-name 'devlab-s3-bucket-pipeline' --query Stacks[*].Outputs[*]
 ```
 
 ![S3 Lab Deployment Stack](images/s3_lab_deployment_pipeline_stack.png)
@@ -115,8 +115,8 @@ $ aws cloudformation describe-stacks --stack-name 'devlab-s3-bucket-pipeline' --
 3. Now the code repository is ready, you need to [setup credentials](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-https-unixes.html#setting-up-https-unixes-credential-helper) so we can use access it.
 
 ```bash
-$ git config --global credential.helper '!aws codecommit credential-helper $@'
-$ git config --global credential.UseHttpPath true
+git config --global credential.helper '!aws codecommit credential-helper $@'
+git config --global credential.UseHttpPath true
 ```
 
 4. Clone the respository using http url. This will create a new folder in our workspace.
@@ -124,12 +124,12 @@ $ git config --global credential.UseHttpPath true
 **Note** Execute following command to fetch code commit details 
 
 ```bash
-$ aws cloudformation describe-stacks --stack-name 'devlab-s3-bucket-pipeline' --query Stacks[*].Outputs[*]
+aws cloudformation describe-stacks --stack-name 'devlab-s3-bucket-pipeline' --query Stacks[*].Outputs[*]
 ```
 
 
 ```bash
-$ git clone <CodeCloneHttpUrl>
+git clone <CodeCloneHttpUrl>
 ```
 
 ![S3 Lab Clone Repo](images/s3_lab_cloned_repo.png)
@@ -138,17 +138,17 @@ $ git clone <CodeCloneHttpUrl>
 5. Use following command to move files from prereqs to our repo
 
 ```bash
-$ cp -R /home/ec2-user/environment/awss3labhome/prereqs/*.html /home/ec2-user/environment/devlab-s3-bucket-pipeline-website/
+cp -R /home/ec2-user/environment/awss3labhome/prereqs/*.html /home/ec2-user/environment/devlab-s3-bucket-pipeline-website/
 ```
 
 6. Expand the folder to verify the files are there, and update index.html using cloud9. Use following command to commit your changes to the repository. 
    
 
 ```bash
-$ cd /home/ec2-user/environment/devlab-s3-bucket-pipeline-website/ 
-$ git add .
-$ git commit -m 'first commit: updates to index.html'
-$ git push
+cd /home/ec2-user/environment/devlab-s3-bucket-pipeline-website/ 
+git add .
+git commit -m 'first commit: updates to index.html'
+git push
 ```
 
 7. Access [CodePipeline](https://console.aws.amazon.com/codepipeline) through console. You will notice that pipeline has pushed your changes to s3 bucket.
